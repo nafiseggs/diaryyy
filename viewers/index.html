@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View School Diary</title>
+    <link rel="stylesheet" href="viewer-style.css" />
+  </head>
+  <body>
+    <div class="background-decoration">
+      <div class="book book-1"></div>
+      <div class="book book-2"></div>
+      <div class="book book-3"></div>
+      <div class="pencil pencil-1"></div>
+      <div class="pencil pencil-2"></div>
+    </div>
+
+    <div class="container">
+      <div class="header">
+        <div class="header-icon">
+          <div class="book-icon"></div>
+        </div>
+        <h1>School Diary Viewer</h1>
+        <p>Access your daily class diary</p>
+      </div>
+
+      <div class="form-card" id="formCard">
+        <div class="form-group">
+          <label for="viewClass">
+            <span class="label-icon">📖</span>
+            Select Your Class
+          </label>
+          <select id="viewClass" required>
+            <option value="">Choose your class</option>
+            <option value="STD.I (Orchid & Camellia)">STD.I (Orchid & Camellia)</option>
+            <option value="STD.II (Daffodil & Daisy)">STD.II (Daffodil & Daisy)</option>
+            <option value="STD.III (Magnolia & Gardenia)">STD.III (Magnolia & Gardenia)</option>
+            <option value="STD.IV (Lavender)">STD.IV (Lavender)</option>
+            <option value="STD.V (Azalea)">STD.V (Azalea)</option>
+            <option value="STD.VI (Iris)">STD.VI (Iris)</option>
+            <option value="STD.VII (Aster)">STD.VII (Aster)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="viewSubject">
+            <span class="label-icon">📚</span>
+            Select Subject
+          </label>
+          <select id="viewSubject" required>
+            <option value="">Choose subject</option>
+            <option value="Music">Music</option>
+            <option value="Bangla">Bangla</option>
+            <option value="Art & Craft">Art & Craft</option>
+            <option value="Value Education">Value Education</option>
+            <option value="English">English</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science</option>
+            <option value="Global English">Global English</option>
+            <option value="Physics">Physics</option>
+            <option value="BGST">BGST</option>
+            <option value="ICT">ICT</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Biology">Biology</option>
+            <option value="Primary English">Primary English</option>
+            <option value="Mathematics D">Mathematics D</option>
+            <option value="Mathematics Additional">Mathematics Additional</option>
+            <option value="Global Citizenship">Global Citizenship</option>
+            <option value="Global Perspective">Global Perspective</option>
+            <option value="Global Perspective & Global Citizenship">Global Perspective & Global Citizenship</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="viewDate">
+            <span class="label-icon">📅</span>
+            Select Date
+          </label>
+          <input type="date" id="viewDate" required />
+        </div>
+
+        <button class="btn-view" id="viewBtn">View Diary</button>
+      </div>
+
+      <div class="diary-display hidden" id="diaryDisplay">
+        <div class="diary-header">
+          <h2 id="diaryTitle">Your Diary</h2>
+          <button class="btn-back" id="backBtn">← Back</button>
+        </div>
+        <div class="diary-content">
+          <img id="diaryImageView" alt="School Diary" />
+          <p class="no-diary hidden" id="noDiary">No diary found for this selection</p>
+        </div>
+        <button class="btn-download" id="downloadDiaryBtn">Download Diary</button>
+      </div>
+    </div>
+
+    <div class="loader hidden" id="loader">
+      <div class="spinner"></div>
+      <p>Loading diary...</p>
+    </div>
+
+    <div class="footer">© 2026 Nabila - All Rights Reserved</div>
+
+    <script src="viewer-script.js"></script>
+  </body>
+</html>
