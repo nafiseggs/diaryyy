@@ -52,6 +52,7 @@ async function sendToTelegram(data, imageDataUrl) {
     const caption = `
 📚 *New School Diary Entry*
 
+📅 *Date:* ${data.date}
 🏫 *Class:* ${data.cls}
 📖 *Subject:* ${data.subject}
 👨‍🏫 *Teacher:* ${data.teacher}
